@@ -1,5 +1,6 @@
 const initialState = {
-  screen1: {}
+  screen1: {},
+  doRefreshToHome: true
 }
 
 const reducer = (state = initialState, action) => {
@@ -8,6 +9,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         screen1: action.payload
+      }
+    case '@global/refreshToHome':
+      return {
+        ...state,
+        doRefreshToHome: false
       }
     default:
       return state;

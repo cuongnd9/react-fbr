@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import withRefresh from './withRefresh';
 import { saveScreen1Data } from './action';
 
 const Screen1 = () => {
@@ -12,15 +13,6 @@ const Screen1 = () => {
   const [password, setPassword] = useState('');
   const [doRemember, setDoRemember] = useState(false);
 
-  useEffect(() => {
-    if (history.action === 'POP') {
-      alert('lalala...')
-      setEmail(data.email);
-      setPassword(data.password);
-      setDoRemember(data.doRemember)
-    }
-  }, [history.action]);
-
   const handleSave = () => {
     dispatch(saveScreen1Data({
       email,
@@ -28,11 +20,26 @@ const Screen1 = () => {
       doRemember
     }))
   }
+  // componentWillReceiveProps
+  useEffect(() => {
+    if (history.action === 'POP') {
+      setEmail(data.email);
+      setPassword(data.password);
+      setDoRemember(data.doRemember)
+    }
+  }, []);
+
+  // componentWillUnmount
+  useEffect(() => {
+    return () => {
+      handleSave();
+    }
+  }, [email, password, doRemember])
+
   return (
     <div>
       <h1>Screen 1</h1>
-      <Link to='/home'>Home</Link>
-      <Link to='/screen2'>Screen 2</Link>
+      <Link to='/'>Home</Link>
       <form>
         <div className="form-group">
           <label htmlFor="email">Email address:</label>
@@ -47,10 +54,10 @@ const Screen1 = () => {
             <input className="form-check-input" type="checkbox" checked={doRemember} onChange={e => setDoRemember(e.target.checked)} /> Remember me
           </label>
         </div>
-        <Link to='/screen2' onClick={handleSave}>Screen 2</Link>
+        <Link onClick={handleSave} to='/screen2'>Screen 2</Link>
       </form>
     </div>
   )
 }
 
-export default Screen1;
+export default withRefresh(Screen1, '/');
